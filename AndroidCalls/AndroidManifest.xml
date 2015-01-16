@@ -1,0 +1,67 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.androidcalls"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="13"
+        android:targetSdkVersion="19" />
+
+    <uses-permission android:name="android.permission.MODIFY_PHONE_STATE" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+
+    <application
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="com.androidcalls.signin.SplashScreenActivity"
+            android:screenOrientation="portrait" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.androidcalls.signin.SignInActivity"
+            android:label="@string/title_activity_main"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.androidcalls.slidemenu.LeftMenuActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.androidcalls.slidemenu.SlideMenuActivityGroup"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.androidcalls.details.DashBoardActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.androidcalls.reports.ReportActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.androidcalls.sms.EditSMSActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.androidcalls.sms.GroupSMSActivity"
+            android:screenOrientation="portrait" />
+
+        <service
+            android:name="com.androidcalls.CallDetectService"
+            android:enabled="true"
+            android:exported="false" >
+        </service>
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+    </application>
+
+</manifest>
