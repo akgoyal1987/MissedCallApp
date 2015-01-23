@@ -27,7 +27,7 @@ public class SplashScreenActivity extends Activity {
 			public void run() {
 
 				try {
-					Thread.sleep(5000);
+					Thread.sleep(500);
 
 				} catch (Exception e) {
 					// TODO: handle exception

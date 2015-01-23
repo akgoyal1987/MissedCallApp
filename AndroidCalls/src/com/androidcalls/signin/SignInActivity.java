@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,7 +49,7 @@ public class SignInActivity extends Activity implements ConnectionCallbacks,
 
 		UserModel.loginactivity = this;
 		isGmailLoggedInAttemp = false;
-		((TextView) findViewById(R.id.btnGmailLogin))
+		((ImageButton) findViewById(R.id.btnGmailLogin))
 				.setOnClickListener(new OnClickListener() {
 
 					@Override
@@ -58,7 +59,7 @@ public class SignInActivity extends Activity implements ConnectionCallbacks,
 						signInWithGplus();
 					}
 				});
-		((TextView) findViewById(R.id.txtSkipLogin))
+		((ImageButton) findViewById(R.id.btnSkipLogin))
 				.setOnClickListener(new OnClickListener() {
 
 					@Override

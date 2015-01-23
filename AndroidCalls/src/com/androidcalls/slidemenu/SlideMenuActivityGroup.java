@@ -41,8 +41,10 @@ public class SlideMenuActivityGroup extends ActivityGroup implements
 		mContext = this;
 		intntClass = new Intent("requestReciever");
 		getSlideMenu().setOnSlideStateChangeListener(this);
-		Utility.setStringPreferences(mContext, "send_sms",
-				"Thank you for taking part in this survey");
+		if(Utility.getStringPreferences(mContext, "send_sms")==null){
+			Utility.setStringPreferences(mContext, "send_sms",
+					"Thank you for taking part in this survey");
+		}	
 	}
 
 	public SlideMenu getSlideMenu() {
