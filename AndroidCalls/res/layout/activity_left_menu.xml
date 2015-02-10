@@ -15,10 +15,11 @@
 
         <com.androidcalls.widgets.CircleImageView
             android:id="@+id/imageViewUser"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="10dp"
             android:layout_marginTop="5dp"
             android:src="@drawable/ic_launcher"
             app:border_color="#EEEEEE"
@@ -30,10 +31,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/imageViewUser"
-            android:layout_marginBottom="10dp"
-            android:gravity="center_horizontal"
+            android:gravity="left"
+            android:paddingLeft="10dp"
             android:text="Aseem Sharma"
             android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#ffffff" />
+
+        <TextView
+            android:id="@+id/txtUserEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txtUserName"
+            android:layout_marginBottom="10dp"
+            android:gravity="left"
+            android:paddingLeft="10dp"
+            android:text="Aseem.Sharma@gmail.com"
+            android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="#ffffff" />
     </RelativeLayout>
 
@@ -173,7 +186,7 @@
                     android:text="Settings"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
             </RelativeLayout>
-            
+
             <RelativeLayout
                 android:id="@+id/layoutlogout"
                 android:layout_width="match_parent"
@@ -198,7 +211,6 @@
                     android:text="Logout"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
             </RelativeLayout>
-
         </LinearLayout>
     </LinearLayout>
 

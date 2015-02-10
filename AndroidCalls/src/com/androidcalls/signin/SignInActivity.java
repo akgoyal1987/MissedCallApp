@@ -120,7 +120,8 @@ public class SignInActivity extends Activity implements ConnectionCallbacks,
 			}
 
 		} else {
-			System.out.println("User can not go to Home page ");
+			Utility.showAlert(SignInActivity.this, "Alert",
+					"You are not registered with this application. Please register or skip login");
 		}
 	}
 
