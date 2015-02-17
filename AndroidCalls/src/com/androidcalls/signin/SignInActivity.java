@@ -24,6 +24,7 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,14 +43,13 @@ public class SignInActivity extends Activity implements ConnectionCallbacks,
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_signin);
 
 		UserModel.loginactivity = this;
 		isGmailLoggedInAttemp = false;
-		((ImageButton) findViewById(R.id.btnGmailLogin))
+		((LinearLayout) findViewById(R.id.btnGmailLogin))
 				.setOnClickListener(new OnClickListener() {
 
 					@Override
@@ -59,7 +59,7 @@ public class SignInActivity extends Activity implements ConnectionCallbacks,
 						signInWithGplus();
 					}
 				});
-		((ImageButton) findViewById(R.id.btnSkipLogin))
+		((LinearLayout) findViewById(R.id.btnSkipLogin))
 				.setOnClickListener(new OnClickListener() {
 
 					@Override
@@ -107,7 +107,7 @@ public class SignInActivity extends Activity implements ConnectionCallbacks,
 		}
 	}
 
-	public void CompleteLoginHandler(boolean status) {
+	public void CompleteLoginHandler(boolean status, String error_message) {
 		UserModel.getInstance().hideProgressHud();
 		if (status) {
 			// allow user to get in App and send to Home controller
@@ -120,13 +120,12 @@ public class SignInActivity extends Activity implements ConnectionCallbacks,
 			}
 
 		} else {
-			System.out.println("User can not go to Home page ");
+			Utility.showAlert(SignInActivity.this, "Alert", error_message);
 		}
 	}
 
 	@Override
 	public void onConnectionFailed(ConnectionResult result) {
-		// TODO Auto-generated method stub
 		if (!result.hasResolution()) {
 			GooglePlayServicesUtil.getErrorDialog(result.getErrorCode(), this,
 					0).show();
@@ -187,8 +186,8 @@ public class SignInActivity extends Activity implements ConnectionCallbacks,
 
 	@Override
 	public void onConnected(Bundle connectionHint) {
-		// TODO Auto-generated method stub
 
+		Log.d("OnConnected", "Called");
 		if (mGoogleApiClient != null && !mGoogleApiClient.isConnecting()) {
 
 			if (!UserModel.isUserLoggedIn && !isGmailLoggedInAttemp) {
@@ -221,8 +220,7 @@ public class SignInActivity extends Activity implements ConnectionCallbacks,
 
 	@Override
 	public void onConnectionSuspended(int cause) {
-		// TODO Auto-generated method stub
-		mGoogleApiClient.connect();
+		// mGoogleApiClient.connect();
 	}
 
 	@Override
@@ -234,10 +232,9 @@ public class SignInActivity extends Activity implements ConnectionCallbacks,
 			}
 
 			mIntentInProgress = false;
-			if (!mGoogleApiClient.isConnecting()) {
-				mGoogleApiClient.connect();
-
-			}
+//			if (!mGoogleApiClient.isConnecting()) {
+//				mGoogleApiClient.connect();
+//			}
 		}
 
 	}

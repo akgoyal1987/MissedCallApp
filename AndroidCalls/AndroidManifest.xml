@@ -21,7 +21,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.androidcalls.signin.SplashScreenActivity"
+            android:name="com.androidcalls.signin.SignInActivity"
             android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,7 +30,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.androidcalls.signin.SignInActivity"
+            android:name="com.androidcalls.signin.SplashScreenActivity"
             android:label="@string/title_activity_main"
             android:screenOrientation="portrait" >
         </activity>

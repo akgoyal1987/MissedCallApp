@@ -1,32 +1,28 @@
 package com.androidcall.model;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Bundle;
 
 import com.androidcalls.Utility;
 import com.androidcalls.signin.SignInActivity;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
+import com.androidquery.callback.AjaxStatus;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
-import com.google.android.gms.internal.gm;
-import com.google.android.gms.internal.mc;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
-
-import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.os.Bundle;
 
 public class UserModel implements ConnectionCallbacks,
 		OnConnectionFailedListener {
@@ -71,7 +67,7 @@ public class UserModel implements ConnectionCallbacks,
 			applicationContext = _applicationContext;
 			sharedPreferences = applicationContext.getSharedPreferences(
 					"Hookd", Context.MODE_PRIVATE);
-			AppServiceURL = "";
+			AppServiceURL = "http://app.maptrax.in/phoneservice/customerservice.svc/";
 			aq = new AQuery(applicationContext);
 		}
 	}
@@ -221,8 +217,7 @@ public class UserModel implements ConnectionCallbacks,
 
 				System.out.println(objUser.toString() + "<<<");
 
-				save();
-				login(new HashMap<String, String>(), "gmail");
+				login(email, "gmail");
 			} else {
 				System.out.println("user denided");
 			}
@@ -231,56 +226,42 @@ public class UserModel implements ConnectionCallbacks,
 		}
 	}
 
-	public void login(HashMap<String, String> hmUser, String provider) {
+	public void login(String email, String provider) {
 		// AQuery aq = new AQuery(applicationContext);
 		String url = AppServiceURL;
-		hmUser.put("provider", provider);
 
-		if (provider.equalsIgnoreCase("gmail")) {
-			url = AppServiceURL + "socialsignin";
-			hmUser.put("socialid", socialid);
-			hmUser.put("toekn", token);
-			hmUser.put("username", name);
-			hmUser.put("email", email);
-			hmUser.put("imagepath", imgpath);
-			hmUser.put("gender", gender);
-			hmUser.put("devicetoken", token);
-		}
-		if (provider.equalsIgnoreCase("normal")) {
-			url = AppServiceURL + "signin";
-		}
+		url = AppServiceURL + "authenticatemobileuser/" + email;
 
-		isUserLoggedIn = true;
-		loginactivity.CompleteLoginHandler(isUserLoggedIn);
-		// aq.ajax(url, hmUser, JSONObject.class, new AjaxCallback<JSONObject>()
-		// {
-		// @Override
-		// public void callback(String url, JSONObject json, AjaxStatus status)
-		// {
-		// if (json != null) {
-		// objUser = json;
-		//
-		// if (objUser.has("user")) {
-		// try {
-		// if (objUser.getJSONObject("user").getInt("userid") > 0) {
-		// isUserLoggedIn = true;
-		// UserID = objUser.getJSONObject("user").getInt(
-		// "userid");
-		//
-		// // save user info
-		// save();
-		// } else {
-		// isUserLoggedIn = false;
-		// }
-		// loginactivity.CompleteLoginHandler(isUserLoggedIn);
-		// } catch (JSONException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		// }
-		// }
-		// }
-		// });
+		aq.ajax(url, JSONObject.class, new AjaxCallback<JSONObject>() {
+			@Override
+			public void callback(String url, JSONObject json, AjaxStatus status) {
+				if (json != null) {
+
+					{
+						try {
+							if (json.getString("ErrorCode").contains("1")) {
+								isUserLoggedIn = true;
+
+								// save user info
+								save();
+
+								loginactivity.CompleteLoginHandler(
+										isUserLoggedIn, "");
+
+							} else {
+								isUserLoggedIn = false;
+
+							}
+							loginactivity.CompleteLoginHandler(isUserLoggedIn,
+									json.getString("ErrorMessage"));
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+		});
 
 	}
 

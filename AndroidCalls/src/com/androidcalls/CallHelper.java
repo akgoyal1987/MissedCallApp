@@ -1,11 +1,18 @@
 package com.androidcalls;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
+
+import org.json.JSONObject;
 
 import com.android.internal.telephony.ITelephony;
 import com.androidcall.model.CallingModel;
 import com.androidcalls.db.DBHelper;
+import com.androidcalls.slidemenu.LeftMenuActivity;
 import com.androidcalls.slidemenu.SlideMenuActivityGroup;
+import com.androidquery.AQuery;
+import com.androidquery.callback.AjaxCallback;
+import com.androidquery.callback.AjaxStatus;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -35,26 +42,27 @@ public class CallHelper {
 	private Context ctx;
 	private TelephonyManager tm;
 	private CallStateListener callStateListener;
-
+	public static int count = 0;
 	private OutgoingReceiver outgoingReceiver;
+	CallingModel model;
+	String message = "";
+	static boolean isRunning = false;
 
 	public CallHelper(Context ctx) {
 		this.ctx = ctx;
-
 		callStateListener = new CallStateListener();
 		outgoingReceiver = new OutgoingReceiver();
+		model = new CallingModel();
 	}
 
 	private class CallStateListener extends PhoneStateListener {
 		@Override
 		public void onCallStateChanged(int state, String incomingNumber) {
-			switch (state) {
-			case TelephonyManager.CALL_STATE_RINGING:
-				// called when someone is ringing to this phone
 
+			if (!isRunning && state == TelephonyManager.CALL_STATE_RINGING) {
+				isRunning = true;
 				Toast.makeText(ctx, "Incoming: " + incomingNumber,
 						Toast.LENGTH_LONG).show();
-
 				TelephonyManager tmngr = (TelephonyManager) ctx
 						.getSystemService(Context.TELEPHONY_SERVICE);
 				try {
@@ -64,86 +72,87 @@ public class CallHelper {
 					telephonyService = (ITelephony) m.invoke(tmngr);
 
 					final String phoneNumber = incomingNumber;
-					Log.d("INCOMING", phoneNumber);
 					if ((phoneNumber != null)
 							&& Utility.getBooleanPreferences(ctx, "isBlocking")) {
 						telephonyService.endCall();
-						DBHelper db = new DBHelper(ctx);
-						CallingModel model = new CallingModel();
+
 						model.phone_number = phoneNumber;
-						final String message = phoneNumber
+						message = phoneNumber
 								+ Utility.getStringPreferences(ctx, "send_sms");
-						long id = db.insertCallingData(model);
-						if (id != -1) {
-							int count = Utility.getIntegerPreferences(ctx,
-									"call_count");
-
-							Utility.setIntegerPreferences(ctx, "call_count",
-									count + 1);
-
-							SlideMenuActivityGroup.getInstance().runOnUiThread(
-									new Runnable() {
-
-										@Override
-										public void run() {
-											// TODO Auto-generated method stub
-											try {
-
-												// Uri smsUri = Uri.parse("sms:"
-												// + phoneNumber);
-												//
-												// Intent sendIntent = new
-												// Intent(
-												// Intent.ACTION_VIEW,
-												// smsUri);
-												// sendIntent.putExtra("sms_body",
-												// message);
-												//
-												// sendIntent.putExtra("address",
-												// phoneNumber);
-												// sendIntent
-												// .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-												// sendIntent
-												// .setType("vnd.android-dir/mms-sms");
-												// ctx.startActivity(sendIntent);
-
-												SmsManager smsManager = SmsManager
-														.getDefault();
-												smsManager.sendTextMessage(
-														phoneNumber, null,
-														message, null, null);
-
-												int count_sms = Utility
-														.getIntegerPreferences(
-																ctx,
-																"sms_count");
-
-												Utility.setIntegerPreferences(
-														ctx, "sms_count",
-														count_sms + 1);
-
-											} catch (Exception e) {
-												Toast.makeText(
-														ctx,
-														"SMS faild, please try again later!",
-														Toast.LENGTH_LONG)
-														.show();
-
-												e.printStackTrace();
-											}
-										}
-									});
+						if (Utility.getBooleanPreferences(ctx, "skiplogin") == false) {
+							AQuery aq = new AQuery(ctx);
+							String url = "http://app.maptrax.in/phoneservice/callservice.svc/AddMissedCall";
+							HashMap<String, String> map = new HashMap<String, String>();
+							JSONObject input = new JSONObject();
+							input.putOpt("MobileNumber", phoneNumber+"");
+							input.putOpt("Email", "dhavan.rathore@gmail.com");
+							JSONObject object = new JSONObject(Utility.getStringPreferences(ctx,"userdata"));
+							map.put("MobileNumber", phoneNumber);
+							map.put("Email",  object.getString("email"));
+							aq.post(url, input, JSONObject.class,
+								new AjaxCallback<JSONObject>() {
+									@Override
+									public void callback(String url,
+											JSONObject object,
+											AjaxStatus status) {
+										// Object = {"TotalMissedCalls":0,"MissedCalls":[],"ErrorCode":"1","SuccessMessage":"Missed Call has been Added Successfully.","ErrorMessage":null}
+										insertMessage();
+									}
+								});
+						} else {
+							insertMessage();
 
 						}
-					}
 
+					}
+					isRunning = false;
 				} catch (Exception e) {
 					e.printStackTrace();
+					isRunning = false;
 				}
-
-				break;
 			}
 
+		}
+
+	}
+
+	// Insert message to database and send message.
+	private void insertMessage() {
+		DBHelper db = new DBHelper(ctx);
+
+		long id = db.insertCallingData(model);
+		if (id != -1) {
+			int count = Utility.getIntegerPreferences(ctx, "call_count");
+
+			Utility.setIntegerPreferences(ctx, "call_count", count + 1);
+
+			SlideMenuActivityGroup.getInstance().runOnUiThread(new Runnable() {
+
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					try {
+
+						SmsManager smsManager = SmsManager.getDefault();
+						smsManager.sendTextMessage(model.phone_number, null,
+								message, null, null);
+
+						int count_sms = Utility.getIntegerPreferences(ctx,
+								"sms_count");
+
+						Utility.setIntegerPreferences(ctx, "sms_count",
+								count_sms + 1);
+						
+
+					} catch (Exception e) {
+						Toast.makeText(ctx,
+								"SMS faild, please try again later!",
+								Toast.LENGTH_LONG).show();
+						
+						e.printStackTrace();
+					}
+				}
+			});
 		}
 	}
 
