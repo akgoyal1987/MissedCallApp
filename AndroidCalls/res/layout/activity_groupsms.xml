@@ -2,14 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#D9DADA"
+    android:background="#99d8be"
     android:orientation="vertical" >
 
     <RelativeLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#727271" >
+        android:background="#ff7c00" >
 
         <ImageButton
             android:id="@+id/btn_menu"
@@ -25,10 +25,9 @@
             android:layout_centerHorizontal="true"
             android:layout_centerInParent="true"
             android:layout_centerVertical="true"
-            android:text="Group SMS"
+            android:text="Send SMS"
             android:textColor="#ffffff"
-            android:textSize="22sp"
-            android:textStyle="bold" />
+            android:textSize="22sp" />
     </RelativeLayout>
 
     <EditText
@@ -46,11 +45,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:background="@drawable/bg_green"
+        android:background="@drawable/send_sms_selector"
         android:gravity="center_horizontal"
         android:padding="10dp"
-        android:text="Send"
-        android:textSize="30sp"
-        android:textStyle="bold" />
+        android:text="Send SMS"
+        android:textColor="@android:color/white"
+        android:textSize="22sp" />
 
 </LinearLayout>

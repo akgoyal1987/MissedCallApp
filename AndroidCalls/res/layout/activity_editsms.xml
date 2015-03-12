@@ -2,14 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#D9DADA"
+    android:background="#b4a1d2"
     android:orientation="vertical" >
 
     <RelativeLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#727271" >
+        android:background="#00db78" >
 
         <ImageButton
             android:id="@+id/btn_menu"
@@ -27,8 +27,7 @@
             android:layout_centerVertical="true"
             android:text="Edit SMS"
             android:textColor="#ffffff"
-            android:textSize="22sp"
-            android:textStyle="bold" />
+            android:textSize="22sp" />
     </RelativeLayout>
 
     <EditText
@@ -46,11 +45,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:background="@drawable/bg_green"
+        android:background="@drawable/save_button_selector"
         android:gravity="center_horizontal"
         android:padding="10dp"
         android:text="Save"
-        android:textSize="30sp"
-        android:textStyle="bold" />
+        android:textColor="@android:color/white"
+        android:textSize="22sp" />
 
 </LinearLayout>

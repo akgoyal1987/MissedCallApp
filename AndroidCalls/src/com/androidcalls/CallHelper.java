@@ -43,7 +43,6 @@ public class CallHelper {
 	private TelephonyManager tm;
 	private CallStateListener callStateListener;
 	public static int count = 0;
-	private OutgoingReceiver outgoingReceiver;
 	CallingModel model;
 	String message = "";
 	static boolean isRunning = false;
@@ -51,7 +50,6 @@ public class CallHelper {
 	public CallHelper(Context ctx) {
 		this.ctx = ctx;
 		callStateListener = new CallStateListener();
-		outgoingReceiver = new OutgoingReceiver();
 		model = new CallingModel();
 	}
 
@@ -61,6 +59,7 @@ public class CallHelper {
 
 			if (!isRunning && state == TelephonyManager.CALL_STATE_RINGING) {
 				isRunning = true;
+				tm.listen(callStateListener, PhoneStateListener.LISTEN_NONE);
 				Toast.makeText(ctx, "Incoming: " + incomingNumber,
 						Toast.LENGTH_LONG).show();
 				TelephonyManager tmngr = (TelephonyManager) ctx
@@ -83,22 +82,21 @@ public class CallHelper {
 							AQuery aq = new AQuery(ctx);
 							String url = "http://app.maptrax.in/phoneservice/callservice.svc/AddMissedCall";
 							HashMap<String, String> map = new HashMap<String, String>();
-							JSONObject input = new JSONObject();
-							input.putOpt("MobileNumber", phoneNumber+"");
-							input.putOpt("Email", "dhavan.rathore@gmail.com");
+							JSONObject input = new JSONObject();							
 							JSONObject object = new JSONObject(Utility.getStringPreferences(ctx,"userdata"));
-							map.put("MobileNumber", phoneNumber);
-							map.put("Email",  object.getString("email"));
+							input.putOpt("MobileNumber", phoneNumber + "");
+							input.putOpt("Email", object.getString("email"));
 							aq.post(url, input, JSONObject.class,
-								new AjaxCallback<JSONObject>() {
-									@Override
-									public void callback(String url,
-											JSONObject object,
-											AjaxStatus status) {
-										// Object = {"TotalMissedCalls":0,"MissedCalls":[],"ErrorCode":"1","SuccessMessage":"Missed Call has been Added Successfully.","ErrorMessage":null}
-										insertMessage();
-									}
-								});
+									new AjaxCallback<JSONObject>() {
+										@Override
+										public void callback(String url,
+												JSONObject object,
+												AjaxStatus status) {
+											// Object =
+											// {"TotalMissedCalls":0,"MissedCalls":[],"ErrorCode":"1","SuccessMessage":"Missed Call has been Added Successfully.","ErrorMessage":null}
+											insertMessage();
+										}
+									});
 						} else {
 							insertMessage();
 
@@ -142,13 +140,12 @@ public class CallHelper {
 
 						Utility.setIntegerPreferences(ctx, "sms_count",
 								count_sms + 1);
-						
 
 					} catch (Exception e) {
 						Toast.makeText(ctx,
 								"SMS faild, please try again later!",
 								Toast.LENGTH_LONG).show();
-						
+
 						e.printStackTrace();
 					}
 				}
@@ -159,19 +156,6 @@ public class CallHelper {
 	/**
 	 * Broadcast receiver to detect the outgoing calls.
 	 */
-	public class OutgoingReceiver extends BroadcastReceiver {
-		public OutgoingReceiver() {
-		}
-
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			String number = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
-
-			// Toast.makeText(ctx, "Outgoing: " + number, Toast.LENGTH_LONG)
-			// .show();
-		}
-
-	}
 
 	/**
 	 * Start calls detection.
@@ -179,10 +163,6 @@ public class CallHelper {
 	public void start() {
 		tm = (TelephonyManager) ctx.getSystemService(Context.TELEPHONY_SERVICE);
 		tm.listen(callStateListener, PhoneStateListener.LISTEN_CALL_STATE);
-
-		IntentFilter intentFilter = new IntentFilter(
-				Intent.ACTION_NEW_OUTGOING_CALL);
-		ctx.registerReceiver(outgoingReceiver, intentFilter);
 	}
 
 	/**
@@ -190,7 +170,6 @@ public class CallHelper {
 	 */
 	public void stop() {
 		tm.listen(callStateListener, PhoneStateListener.LISTEN_NONE);
-		ctx.unregisterReceiver(outgoingReceiver);
 	}
 
 }

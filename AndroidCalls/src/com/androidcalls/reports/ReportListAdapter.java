@@ -46,6 +46,8 @@ public class ReportListAdapter extends ArrayAdapter<CallingModel> {
 			holder = new ViewHolder();
 			holder.txtMessage = (TextView) convertView
 					.findViewById(R.id.txt_number);
+			holder.txtMessageCount = (TextView) convertView
+					.findViewById(R.id.txt_number_count);
 			convertView.setTag(holder);
 
 		} else {
@@ -55,13 +57,14 @@ public class ReportListAdapter extends ArrayAdapter<CallingModel> {
 		CallingModel model = getItem(position);
 
 		holder.txtMessage.setText(model.phone_number);
+		holder.txtMessageCount.setText("(" + model.call_count + ")");
 
 		return convertView;
 	}
 
 	class ViewHolder {
 
-		TextView txtMessage;
+		TextView txtMessage, txtMessageCount;
 
 	}
 }

@@ -1,19 +1,8 @@
 package com.androidcalls.signin;
 
-import com.androidcall.model.UserModel;
-import com.androidcalls.R;
-import com.androidcalls.Utility;
-import com.androidcalls.slidemenu.SlideMenuActivityGroup;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.SignInButton;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
-import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
-import com.google.android.gms.plus.Plus;
-import com.google.android.gms.plus.model.people.Person;
-
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
 import android.os.Build;
@@ -22,11 +11,18 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
+
+import com.androidcall.model.UserModel;
+import com.androidcalls.R;
+import com.androidcalls.Utility;
+import com.androidcalls.slidemenu.SlideMenuActivityGroup;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
+import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.plus.Plus;
 
 public class SignInActivity extends Activity implements ConnectionCallbacks,
 		OnConnectionFailedListener {
@@ -40,6 +36,7 @@ public class SignInActivity extends Activity implements ConnectionCallbacks,
 	private boolean mSignInClicked;
 
 	private ConnectionResult mConnectionResult;
+	private ProgressDialog dialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -49,9 +46,9 @@ public class SignInActivity extends Activity implements ConnectionCallbacks,
 
 		UserModel.loginactivity = this;
 		isGmailLoggedInAttemp = false;
+		UserModel.initInstance(SignInActivity.this);
 		((LinearLayout) findViewById(R.id.btnGmailLogin))
 				.setOnClickListener(new OnClickListener() {
-
 					@Override
 					public void onClick(View v) {
 
@@ -121,6 +118,7 @@ public class SignInActivity extends Activity implements ConnectionCallbacks,
 
 		} else {
 			Utility.showAlert(SignInActivity.this, "Alert", error_message);
+			UserModel.getInstance().logout();
 		}
 	}
 
@@ -232,9 +230,10 @@ public class SignInActivity extends Activity implements ConnectionCallbacks,
 			}
 
 			mIntentInProgress = false;
-//			if (!mGoogleApiClient.isConnecting()) {
-//				mGoogleApiClient.connect();
-//			}
+			if (!mGoogleApiClient.isConnected()
+					|| !mGoogleApiClient.isConnecting()) {
+				mGoogleApiClient.connect();
+			}
 		}
 
 	}
