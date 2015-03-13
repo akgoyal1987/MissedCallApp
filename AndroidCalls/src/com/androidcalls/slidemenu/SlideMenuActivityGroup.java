@@ -32,6 +32,7 @@ public class SlideMenuActivityGroup extends ActivityGroup implements
 	static Context mContext;
 
 	Intent intntClass;
+	int current_activity = Constants.DASHBOARD;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +45,9 @@ public class SlideMenuActivityGroup extends ActivityGroup implements
 		if(Utility.getStringPreferences(mContext, "send_sms")==null){
 			Utility.setStringPreferences(mContext, "send_sms",
 					"Thank you for taking part in this survey");
-		}	
+		}
+		Utility.setBooleanPreferences(mContext, "isLoggedIn", true);
+		
 	}
 
 	public SlideMenu getSlideMenu() {
@@ -122,8 +125,17 @@ public class SlideMenuActivityGroup extends ActivityGroup implements
 
 	public void onBackPressed() {
 		super.onBackPressed();
-		Activity activity = activityManager.getActivity("ContentActivity");
-		activity.finish();
+		if(current_activity==Constants.DASHBOARD){
+			Activity activity = activityManager.getActivity("ContentActivity");
+			activity.finish();
+		}else if(current_activity==Constants.EDIT_SMS){
+//			Intent intent = new Intent();
+//			replaceContentView(Constants.EDIT_SMS, intent);
+		}else if(current_activity==Constants.REPORTS){
+//			Intent intent = new Intent();
+//			replaceContentView(Constants.REPORTS, intent);
+		}
+		
 	};
 
 	protected void onResume() {

@@ -43,7 +43,12 @@ public class SignInActivity extends Activity implements ConnectionCallbacks,
 		super.onCreate(savedInstanceState);
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_signin);
-
+		if(Utility.getBooleanPreferences(this, "isLoggedIn")){
+			Intent intent = new Intent(SignInActivity.this,
+					SlideMenuActivityGroup.class);
+			startActivity(intent);
+			finish();
+		}
 		UserModel.loginactivity = this;
 		isGmailLoggedInAttemp = false;
 		UserModel.initInstance(SignInActivity.this);

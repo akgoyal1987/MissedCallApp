@@ -3,6 +3,7 @@ package com.androidcalls.slidemenu;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
@@ -24,12 +25,13 @@ public class LeftMenuActivity extends Activity {
 	CircleImageView imageViewCircle;
 	TextView txtUserName, txtUserEmail;
 	AQuery aq;
-
+	Context mContext;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		mContext = this;
 		setContentView(R.layout.activity_left_menu);
-
+		
 		imageViewCircle = (CircleImageView) findViewById(R.id.imageViewUser);
 		txtUserName = (TextView) findViewById(R.id.txtUserName);
 		txtUserEmail = (TextView) findViewById(R.id.txtUserEmail);
@@ -118,6 +120,7 @@ public class LeftMenuActivity extends Activity {
 				.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
+						Utility.setBooleanPreferences(mContext, "isLoggedIn", false);
 						if (Utility.getBooleanPreferences(
 								LeftMenuActivity.this, "skiplogin"))
 							finish();
